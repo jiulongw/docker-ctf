@@ -2,22 +2,35 @@ FROM ubuntu:xenial
 
 RUN apt-get update && apt-get install -y \
       build-essential \
+      curl \
+      gdb \
       git \
+      inetutils-ping \
       libffi-dev \
       libssl-dev \
       net-tools \
       netcat \
       python-pip \
       python2.7 \
-      vim \
-      inetutils-ping \
       tcpdump \
+      vim \
       ;
 
-RUN pip install --upgrade pip pwntools
+RUN pip install --upgrade pip \
+      capstone \
+      filebytes \
+      pwntools \
+      ropper \
+      ;
 
-RUN mkdir /root/github && \
-      git clone --recursive https://github.com/jiulongw/dotfiles /root/github/dotfiles && \
-      /root/github/dotfiles/setup_bash && \
-      /root/github/dotfiles/setup_vim
+WORKDIR /root/github
+
+RUN git clone --recursive https://github.com/jiulongw/dotfiles dotfiles && \
+      dotfiles/setup_bash && \
+      dotfiles/setup_vim
+
+RUN git clone --recursive https://github.com/longld/peda.git peda && \
+      echo "source /root/github/peda/peda.py" >> /root/.gdbinit
+
+WORKDIR /root
 
